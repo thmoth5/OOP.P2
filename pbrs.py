@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 
-# تعريف الكورسات (Course)
 class AbstractCourse(ABC):
     @abstractmethod
     def create_course(self, name, code, credit_hours=3, max_students=25):
@@ -34,9 +33,9 @@ class Course(AbstractCourse):
         return f"{self.name} ({self.code}), Credit Hours: {self.credit_hours}, Enrolled: {self.enrolled_students}/{self.max_students}"
 
 
-# تعريف الطلاب (Student)
+
 class Student:
-    id_counter = 1  # عدّاد داخلي
+    id_counter = 1
     ID_PREFIX = "UOB-"  # رمز ثابت للمعرف
 
     def __init__(self):
@@ -44,11 +43,11 @@ class Student:
         self.name = None
         self.classes = []
         self.__grades = {}
-        self.max_classes = 5  # الحد الأقصى لعدد المواد
+        self.max_classes = 5
 
     def set_student(self, name):
-        self.id = f"{Student.ID_PREFIX}{Student.id_counter:04d}"  # رقم ثابت متبوع بعداد بصيغة أربعة أرقام
-        Student.id_counter += 1  # زيادة العدّاد لكل طالب جديد
+        self.id = f"{Student.ID_PREFIX}{Student.id_counter:04d}"
+        Student.id_counter += 1
         self.name = name
         self.__grades = {1: None, 2: None}
 
@@ -70,7 +69,7 @@ class Student:
         return f"ID: {self.id}, Name: {self.name}, Enrolled Classes: {enrolled_courses}"
 
 
-# تعريف الجدول (Schedule)
+
 class Schedule:
     def create_schedule(self):
         self.courses = {
@@ -127,23 +126,30 @@ class Schedule:
                 break
         return f"Student registered in {registered} classes."
 
+    def __getitem__(self, time):
+        for day, course in self.courses.items():
+            for i, course in enumerate( course ):
+                if self.schedule_times[i] == time:
+                    return course
+        else:
+            return None
 
-# تجربة الكود
+
 student1 = Student()
 student1.set_student("Ali")
-
 schedule = Schedule()
 schedule.create_schedule()
-
-# عرض جدول يوم الاثنين
+time="10:30 AM-12;30PM"
+lecture=schedule[time]
+if lecture:
+    print(f'{time};{schedule}')
+else:
+    print(f"{time}entered wrong")
 print(schedule.display_schedule("Monday"))
-
 # تسجيل الطالب في المواد
 result = schedule.register_student_in_courses(student1)
 print(result)
-
 # عرض معلومات الطالب
 print(student1.show_student())
-
-# عرض جدول يوم الأربعاء
+# عرض جدول يوم الأربعاء ك مثال
 print(schedule.display_schedule("Wednesday"))
