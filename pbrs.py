@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 
-
 class AbstractCourse(ABC):
     @abstractmethod
     def create_course(self, name, code, credit_hours=3, max_students=25, priority="Normal"):
@@ -28,9 +27,9 @@ class Course(AbstractCourse):
     def enroll_student(self):
         if self.enrolled_students < self.max_students:
             self.enrolled_students += 1
-            return True  # التسجيل ناجح
+            return True
         else:
-            print(f"Alert: {self.name} is full.")  # تنبيه إذا كانت المادة ممتلئة
+            print(f"Alert: {self.name} is full.")  # Alert if the course is full
             return False
 
     def mark_attendance(self, student_id, present=True):
@@ -47,14 +46,13 @@ class Course(AbstractCourse):
 
 class Student:
     id_counter = 1
-    ID_PREFIX = "UOB-"  # رمز ثابت للمعرف
-
+    ID_PREFIX = "UOB-"
     def __init__(self):
         self.id = None
         self.name = None
         self.classes = []
         self.__grades = {}
-        self.activity_log = []  # سجل النشاطات
+        self.activity_log = []
         self.max_classes = 5
 
     def set_student(self, name):
@@ -64,7 +62,7 @@ class Student:
         self.__grades = {}
 
     def enroll_in_class(self, course):
-        # التحقق من التعارض في الجدول
+        # Check for schedule conflicts
         for existing_course in self.classes:
             if existing_course == course:
                 return f"Error: Conflict with {existing_course.name}."
@@ -99,8 +97,9 @@ class Student:
 
     def show_student(self):
         enrolled_courses = ', '.join([course.code for course in self.classes])
-        return f"ID: {self.id}, Name: {self.name}, Enrolled Classes: {enrolled_courses}"
-
+        return (f"ID: {self.id}, Name: {self.name}, Enrolled Classes: {enrolled_courses}")
+    def __repr__(self):
+        return f"{self.name}, id is {self.id}"
 
 class Schedule:
     def create_schedule(self):
@@ -112,7 +111,7 @@ class Schedule:
         }
         self.schedule_times = ["8:30 AM - 10:30 AM", "10:30 AM - 12:30 PM", "12:30 PM - 2:30 PM", "2:30 PM - 4:30 PM"]
 
-        # إعداد أسماء المواد في الجدول
+        # Add courses to the schedule
         self.courses["Sunday"][0].create_course("Data Structures", "CS101", priority="High")
         self.courses["Sunday"][1].create_course("AI", "CS102")
         self.courses["Sunday"][2].create_course("Web Development", "CS103")
@@ -157,50 +156,50 @@ class Schedule:
                     return course
         return None
 
-# إنشاء طالب
+
 student1 = Student()
 student1.set_student("Ali")
 
-# إنشاء جدول
+
 schedule = Schedule()
 schedule.create_schedule()
 
-# عرض الجدول ليوم الأحد
+# Display the schedule for Sunday
 print(schedule.display_schedule("Sunday"))
 
-# تسجيل الطالب في دورة محددة
+# Enroll the student in a course
 course_to_enroll = schedule.courses["Sunday"][0]  # Data Structures
 print(student1.enroll_in_class(course_to_enroll))
 
-# عرض سجل الأنشطة للطالب
+# Show student's activity log
 print("\nActivity Log:")
 print(student1.show_activity_log())
 
-# تسجيل حضور الطالب في دورة
+# Mark attendance for the student
 course_to_enroll.mark_attendance(student1.id, present=True)
 course_to_enroll.mark_attendance(student1.id, present=False)
 
-# عرض الحضور للدورة
+# Display attendance
 print("\nAttendance for Data Structures:")
 print(course_to_enroll.show_attendance())
 
-# إسقاط مادة من جدول الطالب
+# Drop a course
 print("\nDropping a course:")
 print(student1.drop_class("CS101"))
 
-# إعادة عرض سجل الأنشطة بعد الإسقاط
+# Updated activity log
 print("\nUpdated Activity Log:")
 print(student1.show_activity_log())
 
-# تعيين يوم كعطلة
+# Set a holiday
 print("\nSetting holiday:")
 print(schedule.set_holiday("Sunday"))
 
-# عرض الجدول بعد تعيين العطلة
+# Display updated schedule for Sunday
 print("\nUpdated Schedule for Sunday:")
 print(schedule.display_schedule("Sunday"))
 
-# تجربة الوصول إلى دورة عبر التوقيت
+# Test accessing a course by time
 time_slot = "10:30 AM - 12:30 PM"
 lecture = schedule[time_slot]
 if lecture:
